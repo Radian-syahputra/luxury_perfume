@@ -1,0 +1,167 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ================================================= ENUM ========================================================
+
+enum Role {
+  ADMIN
+  CUSTOMER
+}
+
+enum Category {
+  PRIA
+  WANITA
+  UNISEX
+}
+
+enum Concentration {
+  EDP
+  EXTRAIT
+}
+
+enum BottleSize {
+  ML_30
+  ML_50
+  ML_100
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum NotificationStatus {
+  READ
+  UNREAD
+}
+
+// ================================================= MODEL ========================================================
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(CUSTOMER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cart          Cart?
+  orders        Order[]
+  reviews       Review[]
+  notifications Notification[]
+}
+
+model Product {
+  id            String   @id @default(uuid())
+  name          String
+  brand         String
+  description   String
+  category      Category
+  imageUrl      String?
+  imagePublicId String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  variants ProductVariant[]
+  reviews  Review[]
+}
+
+model ProductVariant {
+  id            String        @id @default(uuid())
+  productId     String
+  product       Product       @relation(fields: [productId], references: [id])
+  concentration Concentration
+  bottleSize    BottleSize
+  price         Int
+  stock         Int           @default(0)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  cartItems  CartItem[]
+  orderItems OrderItem[]
+}
+
+model Cart {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cartItems CartItem[]
+}
+
+model CartItem {
+  id             String         @id @default(uuid())
+  cartId         String
+  cart           Cart           @relation(fields: [cartId], references: [id])
+  variantId      String
+  productVariant ProductVariant @relation(fields: [variantId], references: [id])
+  quantity       Int            @default(1)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+}
+
+model Order {
+  id              String      @id @default(uuid())
+  userId          String
+  user            User        @relation(fields: [userId], references: [id])
+  status          OrderStatus @default(PENDING)
+  totalPrice      Int
+  shippingAddress String
+
+  orderItems    OrderItem[]
+  notifications Notification[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model OrderItem {
+  id             String         @id @default(uuid())
+  orderId        String
+  order          Order          @relation(fields: [orderId], references: [id])
+  variantId      String
+  productVariant ProductVariant @relation(fields: [variantId], references: [id])
+  quantity       Int
+  price          Int
+  createdAt      DateTime       @default(now())
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Notification {
+  id        String             @id @default(uuid())
+  userId    String
+  user      User               @relation(fields: [userId], references: [id])
+  orderId   String
+  order     Order              @relation(fields: [orderId], references: [id])
+  message   String
+  status    NotificationStatus @default(UNREAD)
+  createdAt DateTime           @default(now())
+}
