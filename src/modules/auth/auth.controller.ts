@@ -53,15 +53,13 @@ export const logout = async (req: Request, res: Response) => {
   }
 };
 
+export const getMe = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = req.user!.id;
+    const user = await getMeService(userId);
 
-export const getMe = async (req : AuthRequest, res : Response) => {
-    try {
-        const userId = req.user!.id
-        const user = await getMeService(userId)
-
-        return successResponse(res, 200, "Berhasil Mengabil Data User", user)
-    } catch (error : any) {
+    return successResponse(res, 200, "Berhasil Mengabil Data User", user);
+  } catch (error: any) {
     return errorResponse(res, 400, error.message);
-        
-    }
-}
+  }
+};

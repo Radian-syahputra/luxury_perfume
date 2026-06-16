@@ -18,6 +18,8 @@ import {
   deleteVariantService,
 } from "./product.service";
 
+
+
 const uploadToCloudinary = (buffer: Buffer): Promise<any> => {
   return new Promise((resolve, reject) => {
     cloudinary.uploader
@@ -136,57 +138,77 @@ export const deleteProduct = async (req: Request, res: Response) => {
   }
 };
 
-export const createVariant = async (req : Request, res :Response) => {
-    try {
-        const {productId} = req.params
-        const {concentration, bottleSize, price, stock} = req.body
+export const createVariant = async (req: Request, res: Response) => {
+  try {
+    const { productId } = req.params;
+    const { concentration, bottleSize, price, stock } = req.body;
 
-        if(!concentration || !bottleSize || !price || !stock) {
-            return errorResponse(res, 400, "Semua Fields Harus Disi")
-        }
-
-        const newVariant = await createVariantService(productId as string, concentration as Concentration,bottleSize as BottleSize, price, stock )
-
-        return successResponse(res, 201, "Berhasil Membuat Variant Product", newVariant)
-        
-    } catch (error : any) {
-    return errorResponse(res, 400, error.message);
+    if (!concentration || !bottleSize || !price || !stock) {
+      return errorResponse(res, 400, "Semua Fields Harus Disi");
     }
-}
 
-export const getVariantByProductId = async (req : Request, res : Response) => {
-  try {
-    const {productId} = req.params
-    const productVariant = await getVariantByProductIdService(productId as string)
+    const newVariant = await createVariantService(
+      productId as string,
+      concentration as Concentration,
+      bottleSize as BottleSize,
+      price,
+      stock
+    );
 
-    return successResponse(res, 200, "Berhasil Mengambil Variant", productVariant)
-
-  } catch (error : any) {
+    return successResponse(
+      res,
+      201,
+      "Berhasil Membuat Variant Product",
+      newVariant
+    );
+  } catch (error: any) {
     return errorResponse(res, 400, error.message);
   }
-}
+};
 
-export const updateVariant = async (req : Request, res : Response) => {
+export const getVariantByProductId = async (req: Request, res: Response) => {
   try {
-    const {id} = req.params
-    const {concentration, bottleSize, price, stock} = req.body
+    const { productId } = req.params;
+    const productVariant = await getVariantByProductIdService(
+      productId as string
+    );
 
-
-    const updated = await updateVariantService(id as string, {concentration, bottleSize, price, stock})
-
-    return successResponse(res, 200, "Berhasil Mengupdate Variant", updated)
-  } catch (error : any) {
+    return successResponse(
+      res,
+      200,
+      "Berhasil Mengambil Variant",
+      productVariant
+    );
+  } catch (error: any) {
     return errorResponse(res, 400, error.message);
   }
-}
+};
 
-export const deleteVariant = async (req : Request, res : Response) => {
+export const updateVariant = async (req: Request, res: Response) => {
   try {
-    const {id} = req.params
-    await deleteVariantService(id as string)
+    const { id } = req.params;
+    const { concentration, bottleSize, price, stock } = req.body;
 
-    return successResponse(res, 200, "Berhasil Menghapus Variant")
-  } catch (error : any) {
+    const updated = await updateVariantService(id as string, {
+      concentration,
+      bottleSize,
+      price,
+      stock,
+    });
+
+    return successResponse(res, 200, "Berhasil Mengupdate Variant", updated);
+  } catch (error: any) {
     return errorResponse(res, 400, error.message);
   }
-}
+};
+
+export const deleteVariant = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    await deleteVariantService(id as string);
+
+    return successResponse(res, 200, "Berhasil Menghapus Variant");
+  } catch (error: any) {
+    return errorResponse(res, 400, error.message);
+  }
+};

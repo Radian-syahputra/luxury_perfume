@@ -191,36 +191,34 @@ export const updateVariantService = async (
   }
 ) => {
   const variant = await prisma.productVariant.findUnique({
-    where : {id}
-  })
-  if(!variant){
-    throw new Error("Variant Tidak Di Temukan")
+    where: { id },
+  });
+  if (!variant) {
+    throw new Error("Variant Tidak Di Temukan");
   }
 
   const updateProductVariant = await prisma.productVariant.update({
-    where : {id},
-    data : {
-      ...data
-    }
-  })
+    where: { id },
+    data: {
+      ...data,
+    },
+  });
 
-  return updateProductVariant
-
+  return updateProductVariant;
 };
 
-
-export const deleteVariantService = async (id : string) => {
+export const deleteVariantService = async (id: string) => {
   const variant = await prisma.productVariant.findUnique({
-    where : {id}
-  })
+    where: { id },
+  });
 
-  if(!variant) {
-    throw new Error("Variant Tidak Di Temukan")
+  if (!variant) {
+    throw new Error("Variant Tidak Di Temukan");
   }
 
   await prisma.productVariant.delete({
-    where :{id}
-  })
+    where: { id },
+  });
 
-  return {message : "Success Delete"}
-}
+  return { message: "Success Delete" };
+};
