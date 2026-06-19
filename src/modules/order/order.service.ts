@@ -148,7 +148,7 @@ export const getOrderByIdService = async (id: string) => {
   return order;
 };
 
-export const updateOrderStatus = async (id: string, status: OrderStatus) => {
+export const updateOrderStatusService = async (id: string, status: OrderStatus) => {
   const orderStatus = await prisma.order.update({
     where: { id },
     data: {
@@ -166,4 +166,53 @@ export const updateOrderStatus = async (id: string, status: OrderStatus) => {
   });
 
   return orderStatus;
+};
+
+export const cancelOrderService = async (userId: string, orderId: string) => {
+  const existOrder = await prisma.order.findUnique({
+    where: { id: orderId },
+  });
+
+  if (!existOrder) {
+    throw new Error("Order Tidak Di Temukan");
+  }
+
+  if (existOrder.userId !== userId) {
+    throw new Error("Akses Ditolak, Anda Bukan Pemilik Order");
+  }
+
+  if (existOrder.status !== "PENDING") {
+    throw new Error("Orderan Sudah Di Proses, Tidak Bisa Di Cancel");
+  }
+
+  await prisma.order.update({
+    where: { id: orderId },
+    data: {
+      status: "CANCELLED",
+    },
+  });
+
+  const orderItems = await prisma.orderItem.findMany({
+    where: { orderId },
+  });
+
+  for (const item of orderItems) {
+    await prisma.productVariant.update({
+      where: { id: item.variantId },
+      data: {
+        stock: { increment: item.quantity },
+      },
+    });
+  }
+
+  await prisma.notification.create({
+    data: {
+      userId,
+      orderId,
+      message: `Pesanan #${orderId} telah dibatalkan`,
+      status: "UNREAD",
+    },
+  });
+
+  return { message: "Pesanan Berhasil Dibatalkan" }
 };
