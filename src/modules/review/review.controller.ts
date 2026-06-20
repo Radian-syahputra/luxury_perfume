@@ -14,7 +14,7 @@ export const createReview = async (req : AuthRequest, res : Response) => {
            return errorResponse(res, 400, "Tolong Fileds Rating Product Di Isi")
         }
 
-        const newReview = createReviewService(userId, productId as string, rating, comment)
+        const newReview = await createReviewService(userId, productId as string, rating, comment)
 
         return successResponse(res, 201, "Berhasil Menambahkan Review", newReview)
 
