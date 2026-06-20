@@ -9,6 +9,7 @@ import cartRoute from './modules/cart/cart.route'
 import orderRoute from './modules/order/order.route'
 import reviewRoute from './modules/review/review.route'
 import notificationRoute from './modules/notification/notification.route'
+import adminRoute from './modules/admin/admin.route'
 
 
 const app = express()
@@ -28,6 +29,7 @@ app.use('/api/carts', cartRoute)
 app.use('/api/orders', orderRoute)
 app.use('/api/reviews', reviewRoute)
 app.use('/api/notifications', notificationRoute)
+app.use('/api/admin', adminRoute)
 
 app.get('/', (_ , res) => {
     res.send("API BERJALAN")
