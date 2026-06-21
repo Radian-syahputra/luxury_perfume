@@ -4,7 +4,8 @@ import {
   getProvincesService,
   checkOngkirService,
   getCitiesService,
-  getDistrictsService
+  getDistrictsService,
+  trackingService,
 } from "./shipping.service";
 
 export const getProvinces = async (req: Request, res: Response) => {
@@ -28,20 +29,22 @@ export const getCities = async (req: Request, res: Response) => {
   }
 };
 
+export const getDistricts = async (req: Request, res: Response) => {
+  try {
+    const { cityId } = req.query;
 
-export const getDistricts = async (req : Request, res : Response) => {
-    try {
-        const {cityId} = req.query
+    const districts = await getDistrictsService(cityId as string);
 
-        const districts = await getDistrictsService(cityId as string)
-
-        return successResponse(res, 200, "Berhasil Mendapatkan Kecamatan", districts)
-    } catch (error : any) {
+    return successResponse(
+      res,
+      200,
+      "Berhasil Mendapatkan Kecamatan",
+      districts
+    );
+  } catch (error: any) {
     return errorResponse(res, 400, error.message);
-        
-    }
-}
-
+  }
+};
 
 export const checkOngkir = async (req: Request, res: Response) => {
   try {
@@ -63,6 +66,21 @@ export const checkOngkir = async (req: Request, res: Response) => {
       "Berhasil Mendapatkan Total Ongkir",
       ongkir
     );
+  } catch (error: any) {
+    return errorResponse(res, 400, error.message);
+  }
+};
+
+export const trackResi = async (req: Request, res: Response) => {
+  try {
+    const { awb, courier, lastPhoneNumber } = req.body;
+    if (!awb || !courier || !lastPhoneNumber) {
+      return errorResponse(res, 400, "Semua Fileds Wajib Di Isi");
+    }
+
+    const resi = await trackingService(awb, courier, lastPhoneNumber);
+
+    return successResponse(res, 200, "Berhasil Mendapatkan Resi", resi);
   } catch (error: any) {
     return errorResponse(res, 400, error.message);
   }

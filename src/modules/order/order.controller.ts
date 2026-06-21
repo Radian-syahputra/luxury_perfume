@@ -60,13 +60,13 @@ export const getOrderById = async (req : AuthRequest, res : Response) => {
 export const updateOrderStatus = async (req : AuthRequest, res : Response) => {
     try {
         const {id} = req.params
-        const {status} = req.body
+        const {status, trackingNumber} = req.body
 
         if(!status) {
             return errorResponse(res, 400, "Status Harus Di isi")
         }
 
-        const updated = await updateOrderStatusService(id as string, status as OrderStatus)
+        const updated = await updateOrderStatusService(id as string, status as OrderStatus, trackingNumber)
         return successResponse(res, 200, "Berhasil Mengubah Status", updated)
 
     } catch (error : any) {

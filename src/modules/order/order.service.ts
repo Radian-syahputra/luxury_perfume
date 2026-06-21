@@ -148,11 +148,12 @@ export const getOrderByIdService = async (id: string) => {
   return order;
 };
 
-export const updateOrderStatusService = async (id: string, status: OrderStatus) => {
+export const updateOrderStatusService = async (id: string, status: OrderStatus, trackingNumber? : string) => {
   const orderStatus = await prisma.order.update({
     where: { id },
     data: {
       status,
+      ...(trackingNumber && {trackingNumber})
     },
   });
 
@@ -160,7 +161,7 @@ export const updateOrderStatusService = async (id: string, status: OrderStatus) 
     data: {
       userId: orderStatus.userId,
       orderId: orderStatus.id,
-      message: `Pesanan #${orderStatus.id} berubah menjadi ${status}`,
+      message: `Pesanan #${orderStatus.id} berubah menjadi ${status}${trackingNumber ? `, nomor resi: ${trackingNumber}` : ''}`,
       status: "UNREAD",
     },
   });

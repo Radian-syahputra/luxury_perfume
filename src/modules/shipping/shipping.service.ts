@@ -46,3 +46,15 @@ export const checkOngkirService = async (
     )
     return response.data
 }
+
+export const trackingService  = async (awb :string, courier : string, lastPhoneNumber : string) => {
+    const response = await rajaOngkirApi.post(`/track/waybill?awb=${awb}&courier=${courier}`,
+        {last_phone_number: lastPhoneNumber }, {
+            headers : {
+                'Content-Type' : 'application/x-www-form-urlencoded'
+            }
+        }
+    ) 
+
+    return response.data
+}

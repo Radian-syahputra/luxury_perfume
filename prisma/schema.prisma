@@ -119,6 +119,7 @@ model CartItem {
 
 model Order {
   id              String      @id @default(uuid())
+  trackingNumber String?
   userId          String
   user            User        @relation(fields: [userId], references: [id])
   status          OrderStatus @default(PENDING)
