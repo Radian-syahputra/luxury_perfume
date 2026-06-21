@@ -10,7 +10,7 @@ import orderRoute from './modules/order/order.route'
 import reviewRoute from './modules/review/review.route'
 import notificationRoute from './modules/notification/notification.route'
 import adminRoute from './modules/admin/admin.route'
-
+import shippingRoute from './modules/shipping/shipping.route'
 
 const app = express()
 const PORT = process.env.PORT || 3000
@@ -30,6 +30,7 @@ app.use('/api/orders', orderRoute)
 app.use('/api/reviews', reviewRoute)
 app.use('/api/notifications', notificationRoute)
 app.use('/api/admin', adminRoute)
+app.use('/api/shipping', shippingRoute)
 
 app.get('/', (_ , res) => {
     res.send("API BERJALAN")
